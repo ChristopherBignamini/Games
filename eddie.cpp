@@ -79,6 +79,13 @@ void clearScreen() {
     cout << "\033[2J\033[1;1H";
 }
 
+void flushInput() {
+    while (inputAvailable()) {
+        char dummy;
+        read(STDIN_FILENO, &dummy, 1);
+    }
+}
+
 // void showImageSplash(const string& filename, int durationMs) {
 //     clearScreen();
 
@@ -338,6 +345,7 @@ void countdownBeforeLevel(
 
         this_thread::sleep_for(chrono::seconds(1));
     }
+    flushInput();
 }
 
 enum class LevelResult {
@@ -399,6 +407,7 @@ LevelResult playLevel(
             char input = readInput();
 
             Position next = player;
+            bool validMove = true;
 
             switch (input) {
                 case 'w':
@@ -424,9 +433,14 @@ LevelResult playLevel(
                 case 'q':
                 case 'Q':
                     return LevelResult::Quit;
+
+                default:
+                    validMove = false;
+                    break;
             }
 
             if (
+                validMove &&
                 isInsideMap(next) &&
                 !containsPosition(barriers, next)
             ) {
