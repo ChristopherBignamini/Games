@@ -491,6 +491,7 @@ LevelResult playLevel(
 
 int main() {
     srand(time(nullptr));
+    std::cout.setf(std::ios::unitbuf);
 
     RawMode rawMode;
 
